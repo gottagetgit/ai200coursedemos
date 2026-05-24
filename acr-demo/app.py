@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    return "Hello from ACR Demo v3.1!"
+    return "Hello from ACR Demo for Task v2.0!"
 
 
 if __name__ == "__main__":
