@@ -1,6 +1,6 @@
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-conn_str = "<your-endpoint-connection-string>"
+conn_str = "<insert your Service Bus connection string here>"
 
 with ServiceBusClient.from_connection_string(conn_str) as client:
     with client.get_queue_sender("orders") as sender:
