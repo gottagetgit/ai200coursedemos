@@ -10,12 +10,12 @@ database = client.get_database_client("ai-demo")
 container = database.get_container_client("products")
 
 # Query all electronics
-query = "SELECT * FROM c WHERE c.category = 'electronics'"
-items = list(container.query_items(query=query, enable_cross_partition_query=True))
+#query = "SELECT * FROM c WHERE c.category = 'electronics'"
+#items = list(container.query_items(query=query, enable_cross_partition_query=True))
 
-#query = "SELECT * FROM c WHERE c.price < @maxprice"
-#params = [{"name": "@maxprice", "value": 700}]
-#items = list(container.query_items(query=query, parameters=params, enable_cross_partition_query=False))
+query = "SELECT * FROM c WHERE c.price < @maxprice"
+params = [{"name": "@maxprice", "value": 700}]
+items = list(container.query_items(query=query, parameters=params, enable_cross_partition_query=True))
 
 for item in items:
     print(item)
