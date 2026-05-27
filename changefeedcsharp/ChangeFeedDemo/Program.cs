@@ -1,9 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure.Cosmos;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Azure.Cosmos;
 
 namespace ChangeFeedDemo
 {
@@ -15,25 +14,23 @@ namespace ChangeFeedDemo
 
     internal class Program
     {
+        // For teaching: set this to your Cosmos connection string,
+        // or read it from an environment variable.
+        private const string ConnectionString = "YOUR_COSMOS_CONNECTION_STRING";
+        private const string DatabaseId = "ai-demo";
+        private const string MonitoredContainerId = "products";
+        private const string LeaseContainerId = "leases";
+
         private static async Task Main(string[] args)
         {
-            // 1. Load configuration (connection string + names)
-            IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddEnvironmentVariables()
-                .Build();
+            CosmosClient client = new CosmosClient(ConnectionString);
 
-            string connectionString = config["CosmosConnectionString"];
-            string databaseId = config["DatabaseId"] ?? "ai-demo";
-            string monitoredContainerId = config["MonitoredContainerId"] ?? "products";
-            string leaseContainerId = config["LeaseContainerId"] ?? "leases";
+            Microsoft.Azure.Cosmos.Container monitoredContainer =
+                client.GetContainer(DatabaseId, MonitoredContainerId);
 
-            CosmosClient client = new CosmosClient(connectionString);
+            Microsoft.Azure.Cosmos.Container leaseContainer =
+                client.GetContainer(DatabaseId, LeaseContainerId);
 
-            Container monitoredContainer = client.GetContainer(databaseId, monitoredContainerId);
-            Container leaseContainer = client.GetContainer(databaseId, leaseContainerId);
-
-            // 2. Build the change feed processor
             ChangeFeedProcessor changeFeedProcessor =
                 monitoredContainer
                     .GetChangeFeedProcessorBuilder<Product>(
@@ -57,8 +54,7 @@ namespace ChangeFeedDemo
             Console.ReadLine();
         }
 
-        // 3. This method is called whenever there are new changes
-        private static async Task HandleChangesAsync(
+        private static Task HandleChangesAsync(
             IReadOnlyCollection<Product> changes,
             CancellationToken cancellationToken)
         {
@@ -69,8 +65,7 @@ namespace ChangeFeedDemo
                 Console.WriteLine($"Change detected: id={product.id}, name={product.name}");
             }
 
-            // Simulate some async work if you want
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
     }
 }
