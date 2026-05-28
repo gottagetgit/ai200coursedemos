@@ -2,7 +2,7 @@ import os
 import psycopg2
 
 conn = psycopg2.connect(
-    host="<server>.postgres.database.azure.com",
+    host=os.environ.get("POSTGRES_DB_HOST"),
     database="postgres",
     user=os.environ.get("POSTGRES_ADMIN"),
     password=os.environ.get("POSTGRES_PASSWORD"),
