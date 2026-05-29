@@ -14,7 +14,8 @@ conn = psycopg2.connect(
     database="postgres",
     user=os.environ["PG_USER"],
     password=os.environ["PG_PASSWORD"],
-    sslmode="require"
+    sslmode="require",
+    port=6432
 )
 
 conn.autocommit = True
@@ -41,12 +42,16 @@ chunks = [
     ("databases", "PostgreSQL with pgvector enables native vector similarity search."),
 ]
 
+cursor.execute(
+    "TRUNCATE TABLE knowledge_base;"
+)
+
 for category, content in chunks:
     embedding = embed(content)
     cursor.execute(
         "INSERT INTO knowledge_base (category, content, embedding) VALUES (%s, %s, %s)",
         (category, content, embedding)
-)
+    )
 
 # RAG query with metadata filter
 user_question = "Which Azure database supports vector search natively?"
@@ -66,7 +71,7 @@ print("Retrieved context:\n", context)
 
 # Generate answer
 response = openai_client.chat.completions.create(
-    model="gpt-4",
+    model="gpt-4.1",
     messages=[
         {"role": "system", "content": f"Answer using only this context:\n{context}"},
         {"role": "user", "content": user_question}
