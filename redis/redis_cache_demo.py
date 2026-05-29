@@ -4,7 +4,7 @@ from openai import AzureOpenAI
 
 r = redis.Redis(
     host=os.environ["REDIS_HOST"],
-    port=6380,
+    port=10000,
     password=os.environ["REDIS_KEY"],
     ssl=True
 )
@@ -31,5 +31,6 @@ def get_cached_response(prompt, ttl=3600):
 
 # First call - cache miss
 print(get_cached_response("What is Azure Container Apps?"))
+
 # Second call - cache hit
 print(get_cached_response("What is Azure Container Apps?"))
