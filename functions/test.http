@@ -1,0 +1,4 @@
+POST https://<your test URL>/api/summarize
+Content-Type: application/json
+
+{"text": "Azure Functions is a serverless compute service that enables running event-driven code at scale."}
